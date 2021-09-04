@@ -22,20 +22,9 @@ const PlaceSchema = new Schema({
     author: {
         type: String,
         required: true,
-    },
-    rating: [{
-        quality:{
-            type:String
-        },
-        service:{
-            type:String
-        },
-        interior:{
-            type:String
-        }
-    }]
+    }
 });
 
-const Photo = mongoose.model('Place', PlaceSchema);
+const Place = mongoose.model('Place', PlaceSchema);
 
-module.exports = Photo;
+module.exports = Place;

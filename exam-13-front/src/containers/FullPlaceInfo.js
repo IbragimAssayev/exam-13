@@ -1,10 +1,10 @@
-mport { Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { deletePhoto, getOneGallery } from "../store/dataActions";
+import {deletePhoto, getOneGallery, getRating} from "../store/dataActions";
 import ImageViewer from 'react-simple-image-viewer';
 
-const MyGallery = (props) => {
+const FullPlaceInfo = (props) => {
 
     const [currentImage, setCurrentImage] = useState(0);
 
@@ -30,8 +30,10 @@ const MyGallery = (props) => {
 
     const dispatch = useDispatch();
 
-    useEffect(() => {
-        dispatch(getOneGallery(props.match.params.id));
+    useEffect(async () => {
+        await dispatch(getOneGallery(props.match.params.id));
+        await dispatch(getRating(props.match.params.id));
+        console.log(props.match.params.id)
     }, [dispatch, props.match.params.id]);
 
     let allPhotoLinks;
@@ -83,4 +85,4 @@ const MyGallery = (props) => {
     )
 }
 
-export default MyGallery;
+export default FullPlaceInfo;

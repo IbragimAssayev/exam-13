@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import Header from './components/Header';
 import MainPage from "./containers/MainPage";
 import AddNewPlace from "./containers/AddNewPlace";
+import FullPlaceInfo from "./containers/FullPlaceInfo";
 
 
 const App = () => {
@@ -19,6 +20,7 @@ const App = () => {
         <Switch>
             <Route exact path="/" component={MainPage} />
             <Route exact path="/addNewPlace" component={AddNewPlace} />
+            <Route exact path="/place/:id" component={FullPlaceInfo} />
             <Route exact path="/login" component={Login} />
             <Route exact path="/register" component={Register} />
         </Switch>

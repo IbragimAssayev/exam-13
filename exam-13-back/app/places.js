@@ -6,7 +6,7 @@ const config = require('../config');
 const router = express.Router();
 const auth = require('../middleware/auth');
 const tryAuth = require('../middleware/tryAuth');
-const Photo = require('../models/Photo');
+const Photo = require('../models/Place');
 const User = require('../models/User');
 
 const storage = multer.diskStorage({
@@ -32,7 +32,8 @@ const createRouter = () => {
     });
 
     router.get('/:id', async (req, res) => {
-        await Photo.find({ author: req.params.id }).populate('userID').then(photo => {
+        await Photo.find({ _id: req.params.id }).populate('userID').then(photo => {
+            console.log(photo)
             if (photo) res.send(photo);
             else res.sendStatus(404);
         }).catch(() => res.sendStatus(500));

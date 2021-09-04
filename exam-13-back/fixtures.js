@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const config = require('./config');
-const Photo = require('./models/Photo');
+const Photo = require('./models/Place');
 const User = require('./models/User');
 const { nanoid } = require('nanoid');
 
