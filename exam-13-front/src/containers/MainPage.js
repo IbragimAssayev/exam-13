@@ -42,7 +42,11 @@ const MainPage = () => {
 
     return (
         <div className="container--wrap" style={{marginTop:20}}>
-123
+            <div className="div">
+                {allPhotoLinks.map(id=>{
+                    console.log(id)
+                })}
+            </div>
         </div>
     )
 }

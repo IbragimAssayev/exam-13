@@ -13,7 +13,7 @@ const LoginedHeader = (user) => {
     return (
         <div className='header'>
             <div className='header--box'>
-                <Link to="/" className="button">Photo Gallery</Link>
+                <Link to="/" className="button">Main Menu</Link>
             </div>
             <div className="header">
                 <Link to={`/addNewPlace`}><h1 className="username">Add New Place</h1></Link>

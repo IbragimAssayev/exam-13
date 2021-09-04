@@ -29,7 +29,7 @@ export const getOneGallery = (id) => {
     };
 };
 
-export const postNewPhoto = (data) => {
+export const postNewPlace = (data) => {
     return async (dispatch, getState) => {
         const state = getState();
         if (state.user.user === null) {

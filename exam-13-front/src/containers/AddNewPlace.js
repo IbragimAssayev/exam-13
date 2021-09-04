@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { postNewPhoto } from "../store/dataActions";
+import { postNewPlace} from "../store/dataActions";
 import { isLogined } from "../store/userActions";
 
 const AddNewPlace = () => {
 
-    const [photo, setPhoto] = useState({
+    const [place, setPlace] = useState({
         title: '',
         image: null,
+        description:''
     });
 
     const [check, setCheck] = useState(false);
@@ -24,24 +25,30 @@ const AddNewPlace = () => {
 
     const submitFormHandler = e => {
         e.preventDefault();
-        if (photo.image === null || photo.title === '') {
-            if (photo.title === '') {
+        if (place.image === null || place.title === '' || place.description === ''|| check===false) {
+            if (place.title === '') {
                 setError({ errorMessage: "Title is required" });
                 return;
-            } else if (photo.image === null) {
+            } else if (place.image === null) {
                 setError({ errorMessage: "Image is required" });
+                return;
+            } else if (place.description === '') {
+                setError({ errorMessage: "Description is required" });
+                return;
+            } else if (check === false) {
+                setError({ errorMessage: "Checkbox" });
                 return;
             }
         }
-        if (photo.image) {
+        if (place.image) {
             let formData = new FormData();
-            Object.keys(photo).forEach(key => {
-                if (photo[key] !== null) {
-                    formData.append(key, photo[key]);
+            Object.keys(place).forEach(key => {
+                if (place[key] !== null) {
+                    formData.append(key, place[key]);
                 }
             });
             setError({ errorMessage: null })
-            dispatch(postNewPhoto(formData));
+            dispatch(postNewPlace(formData));
         }
     };
 
@@ -50,15 +57,15 @@ const AddNewPlace = () => {
     };
 
     const inputChangeHandler = e => {
-        setPhoto({
-            ...photo,
+        setPlace({
+            ...place,
             [e.target.name]: e.target.value
         });
     };
 
     const fileChangeHandler = e => {
-        setPhoto({
-            ...photo,
+        setPlace({
+            ...place,
             [e.target.name]: e.target.files[0]
         });
     };
@@ -73,7 +80,7 @@ const AddNewPlace = () => {
                         <label style={{ color: 'white' }} htmlFor="name">Title</label>
                         <textarea
                             name="title"
-                            value={photo.name}
+                            value={place.title}
                             onChange={(e) => inputChangeHandler(e)}
                             placeholder="Title" />
                     </div>
@@ -81,7 +88,7 @@ const AddNewPlace = () => {
                         <label style={{ color: 'white' }} htmlFor="description">Description</label>
                         <textarea
                             name="description"
-                            value={photo.name}
+                            value={place.description}
                             onChange={(e) => inputChangeHandler(e)}
                             placeholder="Description" />
                     </div>
