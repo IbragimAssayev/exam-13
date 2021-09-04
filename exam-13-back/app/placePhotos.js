@@ -48,7 +48,7 @@ const createRouter = () => {
 
     router.delete('/:id', auth, async (req, res) => {
         const photo = await PlacePhotos.findOne({ _id: req.params.id })
-        const thisPhotoID = JSON.stringify(photo.userID);
+        const thisPhotoID = JSON.stringify(photo.PlaceID);
         const thisUserID = (`"${req.user._id}"`);
         if (thisPhotoID === thisUserID) {
             await photo.remove();

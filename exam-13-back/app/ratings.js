@@ -1,5 +1,4 @@
 const express = require('express');
-const multer = require('multer');
 const router = express.Router();
 const auth = require('../middleware/auth');
 const tryAuth = require('../middleware/tryAuth');
@@ -32,7 +31,7 @@ const createRouter = () => {
 
     router.delete('/:id', auth, async (req, res) => {
         const photo = await Rating.findOne({ _id: req.params.id })
-        const thisPhotoID = JSON.stringify(photo.userID);
+        const thisPhotoID = JSON.stringify(photo.PlaceID);
         const thisUserID = (`"${req.user._id}"`);
         if (thisPhotoID === thisUserID) {
             await photo.remove();

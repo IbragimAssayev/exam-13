@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -51,7 +50,6 @@ const FullPlaceInfo = (props) => {
 
     const user = useSelector(state => state.user.user);
 
-
     const dispatch = useDispatch();
 
     const inputChangeHandler = e => {
@@ -74,7 +72,6 @@ const FullPlaceInfo = (props) => {
         dispatch(getPhotos(props.match.params.id))
     }, [dispatch, props.match.params.id]);
 
-
     const submitFormHandler = e => {
         e.preventDefault();
         dispatch(postNewRating(props.match.params.id,rating));
@@ -92,8 +89,6 @@ const FullPlaceInfo = (props) => {
             dispatch(postNewPhoto(props.match.params.id,formData));
         }
     };
-
-
 
     let allPhotoLinks;
     let allPhotoLinksFull;
@@ -120,11 +115,10 @@ const FullPlaceInfo = (props) => {
         allPhotoLinks = Object.keys(photos.data).map(id => { return photos.data[id] });
     }
 
+    const isThereReviews = allReviews.length === 0;
     let avgService = []
     let avgQuality = []
     let avgInterior = []
-    const isThereReviews = allReviews.length === 0;
-    const average = list => list.reduce((prev, curr) => prev + curr) / list.length;
 
     if (allReviews.length !== 0) {
         avgService = allReviews.map(id=>{
@@ -138,6 +132,7 @@ const FullPlaceInfo = (props) => {
         })
     }
 
+    const average = list => list.reduce((prev, curr) => prev + curr) / list.length;
 
 
     return (
@@ -189,7 +184,7 @@ const FullPlaceInfo = (props) => {
                     </div>
                 </div>
             </div>
-            <div>
+            {user === null ? <h1 style={{color:'white'}}>Want to send a review? <a href={'/login'}>Login!</a></h1> : <div>
                 <div>
                     <select id="quality" name="quality" onChange={inputChangeHandler}>
                         <option>1</option>
@@ -219,8 +214,8 @@ const FullPlaceInfo = (props) => {
                     <input id="image" type="file" name="image" onChange={fileChangeHandler}/>
                     <button onClick={submitPhotoHandler}>ADD photo</button>
                 </div>
+            </div>}
 
-            </div>
             {isViewerOpen && (
                 <ImageViewer
                     src={allPhotoLinksFull}
