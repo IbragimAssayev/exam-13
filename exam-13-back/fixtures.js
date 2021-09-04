@@ -1,7 +1,9 @@
 const mongoose = require('mongoose');
 const config = require('./config');
-const Photo = require('./models/Place');
+const Place = require('./models/Place');
 const User = require('./models/User');
+const Rating = require('./models/Rating');
+const PlacePhotos = require('./models/PlacePhotos');
 const { nanoid } = require('nanoid');
 
 const run = async () => {
@@ -23,43 +25,36 @@ const run = async () => {
         username: 'Doe John',
         password: '123',
         token: nanoid(10)
-    }, {
-        username: 'Doe Doe',
-        password: '123',
-        token: nanoid(10)
     });
 
-    await Photo.create({
-        title: 'Nature 1',
+
+    const [place1, place2] = await Place.create({
+        title: 'Afterlife',
+        description:"Club on the omega station!",
         userID: user1._id,
         author: user1.username,
         image: "1.jpg"
-    }, {
-        title: 'Nature 2',
-        userID: user1._id,
-        author: user1.username,
-        image: "2.jpg"
-    }, {
-        title: 'Nature 3',
+   },{
+        title: 'Afterlife',
+        description:"Club on the omega station!",
         userID: user2._id,
         author: user2.username,
-        image: "3.jpg"
-    }, {
-        title: 'Nature 4',
-        userID: user2._id,
-        author: user2.username,
-        image: "4.jpg"
-    }, {
-        title: 'Nature 5',
-        userID: user3._id,
-        author: user3.username,
-        image: "5.jpg"
-    }, {
-        title: 'Nature 6',
-        userID: user3._id,
-        author: user3.username,
-        image: "6.jpg"
-    })
+        image: "1.jpg"
+    });
+
+    await Rating.create({
+        PlaceID: place1._id,
+        quality:5,
+        service:5,
+        interior: 5,
+        author:user1.username,
+        comment:"I love this place"
+    });
+
+    await PlacePhotos.create({
+        PlaceID: place1._id,
+        image:'2.jpg'
+    });
 
     return connection.close();
 };

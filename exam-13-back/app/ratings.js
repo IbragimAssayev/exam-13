@@ -9,14 +9,12 @@ const createRouter = () => {
 
     router.get('/:id', async (req, res) => {
         await Rating.find({PlaceID: req.params.id }).then(rating => {
-            console.log(rating)
             if (rating) res.send(rating);
             else res.sendStatus(404);
         }).catch(() => res.sendStatus(500));
     });
 
     router.post('/:id', auth, async (req, res) => {
-        console.log(req.body)
         const token = req.get("Authorization");
         const user = await User.findOne({ token: token });
         const rating = new Rating(req.body);
