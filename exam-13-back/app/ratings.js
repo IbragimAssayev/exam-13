@@ -17,6 +17,7 @@ const createRouter = () => {
     });
 
     router.post('/:id', auth, async (req, res) => {
+        console.log(req.body)
         const token = req.get("Authorization");
         const user = await User.findOne({ token: token });
         const rating = new Rating(req.body);

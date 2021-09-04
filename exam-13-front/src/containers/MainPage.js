@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {getPhotos, getPlaces} from "../store/dataActions";
+import {getPlaces} from "../store/dataActions";
 import ImageViewer from 'react-simple-image-viewer';
 import { Link } from "react-router-dom";
 
@@ -21,7 +21,7 @@ const MainPage = () => {
         setIsViewerOpen(false);
     };
 
-    const photos = useSelector(state => state.data.photos);
+    const places = useSelector(state => state.data.places);
 
     const dispatch = useDispatch();
 
@@ -29,21 +29,20 @@ const MainPage = () => {
         dispatch(getPlaces());
     }, [dispatch]);
 
-    let allPhotoLinks;
+    let allPlacesLinks;
+    let allPlacesLinksFull;
 
-    let allPhotoLinksFull;
-
-    if (photos.data === undefined) {
-        allPhotoLinks = []
+    if (places.data === undefined) {
+        allPlacesLinks = [];
     } else {
-        allPhotoLinksFull = Object.keys(photos.data).map(id => { return (`http://localhost:8000/uploads/` + photos.data[id].image) })
-        allPhotoLinks = Object.keys(photos.data).map(id => { return photos.data[id] })
+        allPlacesLinksFull = Object.keys(places.data).map(id => { return (`http://localhost:8000/uploads/` + places.data[id].image) });
+        allPlacesLinks = Object.keys(places.data).map(id => { return places.data[id] });
     }
 
     return (
         <div className="container--wrap" style={{marginTop:20}}>
             <div className="div">
-                {allPhotoLinks.map(id=>{
+                {allPlacesLinks.map(id=>{
                       return  <div>
                           <div>
                               <img width={200} src={`http://localhost:8000/uploads/${id.image}`}/>

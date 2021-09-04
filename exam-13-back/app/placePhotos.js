@@ -23,7 +23,8 @@ const upload = multer({ storage });
 const createRouter = () => {
 
     router.get('/:id', async (req, res) => {
-        await PlacePhotos.find({ PlaceID: req.params.id }).populate('userID').then(photo => {
+        await PlacePhotos.find({ PlaceID: req.params.id }).then(photo => {
+            console.log(photo)
             if (photo) res.send(photo);
             else res.sendStatus(404);
         }).catch(() => res.sendStatus(500));

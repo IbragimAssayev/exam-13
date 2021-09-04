@@ -1,7 +1,15 @@
 import { Link } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {deletePhoto, getOneGallery, getRating, postNewRating} from "../store/dataActions";
+import {
+    deletePhoto,
+    getOneGallery,
+    getOnePlace,
+    getPhotos,
+    getRating,
+    postNewPhoto,
+    postNewRating
+} from "../store/dataActions";
 import ImageViewer from 'react-simple-image-viewer';
 
 const FullPlaceInfo = (props) => {
@@ -31,7 +39,13 @@ const FullPlaceInfo = (props) => {
         comment:''
     })
 
+    const [photo, setPhoto] = useState({
+image:null
+    })
+
     const photos = useSelector(state => state.data.photos);
+
+    const places = useSelector(state => state.data.places);
 
     const ratings = useSelector(state => state.data.ratings);
 
@@ -55,30 +69,32 @@ const FullPlaceInfo = (props) => {
     };
 
     useEffect( () => {
-         dispatch(getOneGallery(props.match.params.id));
+         dispatch(getOnePlace(props.match.params.id));
          dispatch(getRating(props.match.params.id));
-
+        dispatch(getPhotos(props.match.params.id))
     }, [dispatch, props.match.params.id]);
 
 
     const submitFormHandler = e => {
-
         e.preventDefault();
+        dispatch(postNewRating(props.match.params.id,rating));
+    };
 
+    const submitPhotoHandler = e => {
+        e.preventDefault();
+        if (photo.image) {
             let formData = new FormData();
             Object.keys(rating).forEach(key => {
                 if (rating[key] !== null) {
                     formData.append(key, rating[key]);
                 }
             });
-            dispatch(postNewRating(props.match.params.id,formData));
-
+            dispatch(postNewPhoto(props.match.params.id,formData));
+        }
     };
 
     let allPhotoLinks;
-    let allPlacePhotos;
     let allPhotoLinksFull;
-    let isItYourGallery;
     let allReviews;
 
     if (ratings.data === undefined) {
@@ -87,27 +103,49 @@ const FullPlaceInfo = (props) => {
         allReviews = Object.keys(ratings.data).map(id=>{ return ratings.data[id]});
     }
 
+    let onePlaceInfo;
+
+    if (places.data === undefined) {
+        onePlaceInfo = [];
+    } else {
+        onePlaceInfo = Object.keys(places.data).map(id => { return places.data[id] });
+    }
+
     if (photos.data === undefined) {
         allPhotoLinks = []
     } else {
         allPhotoLinksFull = Object.keys(photos.data).map(id => { return (`http://localhost:8000/uploads/` + photos.data[id].image) });
         allPhotoLinks = Object.keys(photos.data).map(id => { return photos.data[id] });
-        if (user === null) {
-            isItYourGallery = false;
-        } else {
-            isItYourGallery = ((props.match.params.id) === user.username);
-        }
     }
+
+    let avgService = []
+    let avgQuality = []
+    let avgInterior = []
+
+    const average = list => list.reduce((prev, curr) => prev + curr) / list.length;
+
+    if (allReviews.length === 0) {
+        return <div>No reviews</div>
+    } else {
+        avgService = allReviews.map(id=>{
+            return parseInt(id.service)
+        })
+        avgQuality = allReviews.map(id=>{
+            return parseInt(id.quality)
+        })
+        avgInterior = allReviews.map(id=>{
+            return parseInt(id.interior)
+        })
+    }
+
 
 
     return (
         <>
-            {isItYourGallery ? <h1 className="container--wrap" ><Link style={{ color: 'white' }} to="/addPhoto">Add Photo</Link></h1> : null}
             <div className="container--wrap" style={{ marginTop: 20 }}>
-                {isItYourGallery ? <h1 style={{ color: 'white' }}>Your Gallery</h1> : <h1 style={{ color: 'white' }}>{(props.match.params.id).charAt(0).toUpperCase() + (props.match.params.id).slice(1)}'s Gallery</h1>}
-                <div className="div">
-                    {allPhotoLinks.map((src, index) => (
-                        <div key={index}>
+                <div style={{display:"flex"}}>
+                    {onePlaceInfo.map((src, index) => (
+                        <div key={index} id={index}>
                             <img
                                 src={(`http://localhost:8000/uploads/` + src.image)}
                                 onClick={() => openImageViewer(index)}
@@ -116,45 +154,87 @@ const FullPlaceInfo = (props) => {
                                 key={index}
                                 style={{ margin: '5px' }}
                                 alt={`IMG_${index}`} />
-                            <h2 style={{ color: 'white', margin: 0 }}>{src.title}</h2>
-                            <div>
-                                {allReviews.map(id=>{
-                                    return <div style={{color:"white", display:'flex', marginTop:60}}>
-                                        <img width={220} src={`http://localhost:8000/uploads/${id.image}`}/>
-                                        <p>service:{id.service}</p>
-                                        <p>quality:{id.quality}</p>
-                                        <p>interior:{id.interior}</p>
-                                        <p>author:{id.author}</p>
+                            <h1 style={{color:'white'}}>{src.title}</h1>
+                            <p style={{color:"white"}}>{src.description}</p>
+                            <div style={{display:"flex", justifyContent:'space-between', flexDirection:'column'}}>
+                                <div style={{color:'white'}}>
+                                    <h1 style={{color:'white'}}>Rating</h1>
+                                    <p>service:{Math.round(average(avgService) * 10)/10}</p>
+                                    <p>quality:{Math.round(average(avgQuality) * 10)/10}</p>
+                                    <p>interior:{Math.round(average(avgInterior) * 10)/10}</p>
+                                </div>
+                                <div style={{display:'flex', flexDirection:'column'}}>
+                                    <h1 style={{color:'white'}}>Gallery</h1>
+                                    <div style={{display:'flex'}}>
+                                        {allPhotoLinks.map((src, index) => (
+                                            <div  key={index}>
+                                                <img
+                                                    src={(`http://localhost:8000/uploads/` + src.image)}
+                                                    onClick={() => openImageViewer(index)}
+                                                    width="200"
+                                                    key={index}
+                                                    alt={`IMG_${index}`} />
+
+                                            </div>
+                                        ))}
                                     </div>
-                                })}
+                                </div>
+                                <div>
+                                    <h1 style={{color:"white"}}>Reviews:</h1>
+                                    {allReviews.map(id=>{
+                                        return <div id={id} style={{color:"white", display:'flex', justifyContent:'space-evenly'}}>
+                                            <p>service:{id.service}</p>
+                                            <p>quality:{id.quality}</p>
+                                            <p>interior:{id.interior}</p>
+                                            <p>comment:{id.comment}</p>
+                                            <p>author:{id.author}</p>
+                                        </div>
+                                    })}
+                                </div>
                             </div>
-                            {isItYourGallery ? <button onClick={() => toggleDelete(src._id)}>Delete</button> : null}
                         </div>
                     ))}
-                    {isViewerOpen && (
-                        <ImageViewer
-                            src={allPhotoLinksFull}
-                            currentIndex={currentImage}
-                            onClose={closeImageViewer}
-                        />
-                    )}
                 </div>
             </div>
             <div>
-
                 <div>
-                    <input name="quality" onChange={inputChangeHandler}/>
-                    <input name="service" onChange={inputChangeHandler}/>
-                    <input name="interior" onChange={inputChangeHandler}/>
+                    <select name="quality" onChange={inputChangeHandler}>
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                    </select>
+                    <select name="service" onChange={inputChangeHandler}>
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                    </select>
+                    <select name="interior" onChange={inputChangeHandler}>
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                    </select>
                     <input name="comment" onChange={inputChangeHandler}/>
+                    <button onClick={submitFormHandler}>Add review</button>
                 </div>
-
                 <div>
                     <input type="file" name="image" onChange={fileChangeHandler}/>
+                    <button onClick={submitPhotoHandler}>ADD photo</button>
                 </div>
 
-                <button onClick={submitFormHandler}>ADD</button>
             </div>
+            {isViewerOpen && (
+                <ImageViewer
+                    src={allPhotoLinksFull}
+                    currentIndex={currentImage}
+                    onClose={closeImageViewer}
+                />
+            )}
         </>
     )
 }
