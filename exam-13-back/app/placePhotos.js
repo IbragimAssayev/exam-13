@@ -31,7 +31,6 @@ const createRouter = () => {
     });
 
     router.post('/:id', [auth, upload.single('image')], async (req, res) => {
-        console.log(req.body)
         const token = await req.get("Authorization");
         const user = await User.findOne({ token: token });
         const photo = new PlacePhotos(req.body);

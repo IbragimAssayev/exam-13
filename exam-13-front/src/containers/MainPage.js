@@ -47,7 +47,7 @@ const MainPage = () => {
                           <div>
                               <img width={200} src={`http://localhost:8000/uploads/${id.image}`}/>
                           </div>
-                          <Link to={`place/${id._id}`} >{id._id}</Link>
+                          <Link style={{color:'white'}} to={`place/${id._id}`} >{id.title}</Link>
                       </div>
                 })}
             </div>

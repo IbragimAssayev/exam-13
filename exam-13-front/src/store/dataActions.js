@@ -39,7 +39,6 @@ export const getRating = (id) => {
         } else {
             const response = await axios.get('/ratings/' +id,
                 { headers: { "Authorization": state.user.user.token } });
-            console.log(response)
             dispatch({ type: "GET_RATINGS", ratings: response });
         }
     };
@@ -50,6 +49,7 @@ export const getOnePlace = (id) => {
         const state = getState();
         if (state.user.user === null) {
             const response = await axios.get('/places/' + id);
+            console.log(response)
             dispatch({ type: "GET_PLACES", places: response });
         } else {
             const response = await axios.get('/places/' + id,
@@ -80,7 +80,7 @@ export const postNewPhoto = (id ,data) => {
         if (state.user.user === null) {
             dispatch(push('/'));
         } else {
-            await axios.post(`/ratings/${id}`, data,
+            await axios.post(`/photos/${id}`, data,
                 { headers: { "Authorization": state.user.user.token } }).then(res => {
                 console.log(res);
                 dispatch(push('/'));
