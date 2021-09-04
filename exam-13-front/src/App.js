@@ -6,6 +6,7 @@ import Register from './containers/User/Register';
 import { useSelector } from 'react-redux';
 import Header from './components/Header';
 import MainPage from "./containers/MainPage";
+import AddNewPlace from "./containers/AddNewPlace";
 
 
 const App = () => {
@@ -17,6 +18,7 @@ const App = () => {
         <Header user={user} />
         <Switch>
             <Route exact path="/" component={MainPage} />
+            <Route exact path="/addNewPlace" component={AddNewPlace} />
             <Route exact path="/login" component={Login} />
             <Route exact path="/register" component={Register} />
         </Switch>

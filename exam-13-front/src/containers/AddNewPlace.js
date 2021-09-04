@@ -3,16 +3,18 @@ import { useDispatch } from "react-redux";
 import { postNewPhoto } from "../store/dataActions";
 import { isLogined } from "../store/userActions";
 
-const NewPhoto = () => {
+const AddNewPlace = () => {
 
     const [photo, setPhoto] = useState({
         title: '',
         image: null,
     });
 
+    const [check, setCheck] = useState(false);
+
     const [err, setError] = useState({
         errorMessage: null
-    })
+    });
 
     const dispatch = useDispatch();
 
@@ -43,6 +45,10 @@ const NewPhoto = () => {
         }
     };
 
+    const checkboxHandler = e => {
+        setCheck(!check)
+    };
+
     const inputChangeHandler = e => {
         setPhoto({
             ...photo,
@@ -59,23 +65,37 @@ const NewPhoto = () => {
 
     return (
         <div>
+            <h1 style={{color:'white'}}>Add New Place</h1>
             <form onSubmit={(e) => submitFormHandler(e)}>
                 <div className="df" style={{ margin: '0 auto' }}>
                     {err.errorMessage ? <div style={{ color: 'red', fontSize: 20, fontWeight: 'bold' }}>{err.errorMessage}</div> : null}
-                    <div >
+                    <div style={{display:'flex', flexDirection:"column"}}>
                         <label style={{ color: 'white' }} htmlFor="name">Title</label>
-                        <input
-
+                        <textarea
                             name="title"
                             value={photo.name}
                             onChange={(e) => inputChangeHandler(e)}
-                            placeholder="Photo title" />
+                            placeholder="Title" />
+                    </div>
+                    <div style={{display:'flex', flexDirection:"column"}}>
+                        <label style={{ color: 'white' }} htmlFor="description">Description</label>
+                        <textarea
+                            name="description"
+                            value={photo.name}
+                            onChange={(e) => inputChangeHandler(e)}
+                            placeholder="Description" />
                     </div>
                     <div>
-                        <label style={{ color: 'white' }} htmlFor="image">Image: </label>
+                        <label style={{ color: 'white' }} htmlFor="image">Main Photo: </label>
                         <input type="file" name="image" id="image" onChange={fileChangeHandler} />
                     </div>
-                    <button type='submit'>Create photo</button>
+                    <div>
+                        <p>By pressing that button blah-blah-blah...</p>
+                        <input type="checkbox" checked={check} onChange={checkboxHandler}/>
+                    </div>
+                    <div>
+                        <button type='submit'>Create photo</button>
+                    </div>
                 </div>
 
             </form>
@@ -83,4 +103,4 @@ const NewPhoto = () => {
         </div>
     )
 }
-export default NewPhoto;
+export default AddNewPlace;
