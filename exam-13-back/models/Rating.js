@@ -7,28 +7,28 @@ const RatingSchema = new Schema({
         ref: 'Place',
         required: true
     },
-    ratingPhotos:[{
-        photo:{
-            type:String,
-            required:true
-        }
-    }],
-    rating: [{
-        quality:{
-            type:String,
-            required: true
-        },
-        service:{
-            type:String,
-            required: true
-        },
-        interior:{
-            type:String,
-            required: true
-        }
-    }]
+    quality:{
+        type:String,
+        required: true
+    },
+    service:{
+        type:String,
+        required: true
+    },
+    interior:{
+        type:String,
+        required: true
+    },
+    author:{
+        type:String,
+        required: true
+    },
+    comment:{
+        type:String,
+        required: true
+    }
 });
 
-const Photo = mongoose.model('Rating', RatingSchema);
+const Rating = mongoose.model('Rating', RatingSchema);
 
-module.exports = Photo;
+module.exports = Rating;

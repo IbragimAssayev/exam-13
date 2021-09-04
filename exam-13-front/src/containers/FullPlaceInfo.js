@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {deletePhoto, getOneGallery, getRating} from "../store/dataActions";
+import {deletePhoto, getOneGallery, getRating, postNewRating} from "../store/dataActions";
 import ImageViewer from 'react-simple-image-viewer';
 
 const FullPlaceInfo = (props) => {
@@ -24,21 +24,68 @@ const FullPlaceInfo = (props) => {
         dispatch(deletePhoto(id));
     }
 
+    const [rating, setRating] = useState({
+        quality:'',
+        service:'',
+        interior:'',
+        comment:''
+    })
+
     const photos = useSelector(state => state.data.photos);
+
+    const ratings = useSelector(state => state.data.ratings);
 
     const user = useSelector(state => state.user.user);
 
+
     const dispatch = useDispatch();
 
-    useEffect(async () => {
-        await dispatch(getOneGallery(props.match.params.id));
-        await dispatch(getRating(props.match.params.id));
-        console.log(props.match.params.id)
+    const inputChangeHandler = e => {
+        setRating({
+            ...rating,
+            [e.target.name]: e.target.value
+        });
+    };
+
+    const fileChangeHandler = e => {
+        setRating({
+            ...rating,
+            [e.target.name]: e.target.files[0]
+        });
+    };
+
+    useEffect( () => {
+         dispatch(getOneGallery(props.match.params.id));
+         dispatch(getRating(props.match.params.id));
+
     }, [dispatch, props.match.params.id]);
 
+
+    const submitFormHandler = e => {
+
+        e.preventDefault();
+
+            let formData = new FormData();
+            Object.keys(rating).forEach(key => {
+                if (rating[key] !== null) {
+                    formData.append(key, rating[key]);
+                }
+            });
+            dispatch(postNewRating(props.match.params.id,formData));
+
+    };
+
     let allPhotoLinks;
+    let allPlacePhotos;
     let allPhotoLinksFull;
     let isItYourGallery;
+    let allReviews;
+
+    if (ratings.data === undefined) {
+        allReviews = []
+    } else {
+        allReviews = Object.keys(ratings.data).map(id=>{ return ratings.data[id]});
+    }
 
     if (photos.data === undefined) {
         allPhotoLinks = []
@@ -51,6 +98,7 @@ const FullPlaceInfo = (props) => {
             isItYourGallery = ((props.match.params.id) === user.username);
         }
     }
+
 
     return (
         <>
@@ -69,6 +117,17 @@ const FullPlaceInfo = (props) => {
                                 style={{ margin: '5px' }}
                                 alt={`IMG_${index}`} />
                             <h2 style={{ color: 'white', margin: 0 }}>{src.title}</h2>
+                            <div>
+                                {allReviews.map(id=>{
+                                    return <div style={{color:"white", display:'flex', marginTop:60}}>
+                                        <img width={220} src={`http://localhost:8000/uploads/${id.image}`}/>
+                                        <p>service:{id.service}</p>
+                                        <p>quality:{id.quality}</p>
+                                        <p>interior:{id.interior}</p>
+                                        <p>author:{id.author}</p>
+                                    </div>
+                                })}
+                            </div>
                             {isItYourGallery ? <button onClick={() => toggleDelete(src._id)}>Delete</button> : null}
                         </div>
                     ))}
@@ -80,6 +139,21 @@ const FullPlaceInfo = (props) => {
                         />
                     )}
                 </div>
+            </div>
+            <div>
+
+                <div>
+                    <input name="quality" onChange={inputChangeHandler}/>
+                    <input name="service" onChange={inputChangeHandler}/>
+                    <input name="interior" onChange={inputChangeHandler}/>
+                    <input name="comment" onChange={inputChangeHandler}/>
+                </div>
+
+                <div>
+                    <input type="file" name="image" onChange={fileChangeHandler}/>
+                </div>
+
+                <button onClick={submitFormHandler}>ADD</button>
             </div>
         </>
     )

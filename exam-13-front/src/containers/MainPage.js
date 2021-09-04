@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getPhotos } from "../store/dataActions";
+import {getPhotos, getPlaces} from "../store/dataActions";
 import ImageViewer from 'react-simple-image-viewer';
 import { Link } from "react-router-dom";
 
@@ -26,7 +26,7 @@ const MainPage = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        dispatch(getPhotos());
+        dispatch(getPlaces());
     }, [dispatch]);
 
     let allPhotoLinks;
